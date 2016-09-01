@@ -1,5 +1,7 @@
-# Compiled
 *.elc
-
-# Packaging
 .cask
+*~
+
+session.*
+.emacs.desktop
+.emacs.desktop.lock
