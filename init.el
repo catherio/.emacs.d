@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;; GENERAL EMACS ;;;;;;;;;;;;;;;;;
 
-;; Loading plugins
-(add-to-list 'load-path "~/.emacs.d/")
+;; Packages
+(add-to-list 'load-path "~/.emacs.d/elfiles")
 
 ;; Visual line mode
 ; (ie, turn on word-wrapping, and make C-n etc. work on the lines you *see*)
@@ -63,7 +63,6 @@
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
-(setq org-agenda-files (list "~/Documents/Research/month.org"))
 (setq org-todo-keywords
        '((sequence "TODO" "IN PROGRESS" "STARTED" "|" "DONE" "CANCELED" "")))
      (setq org-todo-keyword-faces
@@ -79,7 +78,7 @@
 ;(add-hook 'python-mode-hook
 ;		  (function (lambda () (setq tab-width 4
 ;									 python-indent 4))))
-(setq py-install-directory  "~/.emacs.d/python-mode.el-6.2.2/")
+(setq py-install-directory  "~/.emacs.d/elfiles/python-mode.el-6.2.2/")
 (add-to-list 'load-path py-install-directory)
 (require 'python-mode)
 
@@ -144,3 +143,8 @@
  (setq matlab-indent-function t)
  (setq matlab-shell-command "matlab")
 
+;; Mac stuff
+(set-keyboard-coding-system nil)
+
+;; Backups??
+(setq backup-directory-alist `(("." . "~/.saves")))
