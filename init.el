@@ -10,7 +10,7 @@
 ;; Interactively DO things
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
-(ido-mode 1) 
+(ido-mode 1)
 
 (load "ido-better-flex-0.2.el")
 (ido-better-flex/enable)
@@ -40,20 +40,21 @@
 ;; Prettier startup: close scratch, etc.
 ;(setq initial-buffer-choice "~/Documents/Research/today.org")
 (setq-default message-log-max nil)
-(kill-buffer "*Messages*")
+;(kill-buffer "*Messages*")
 (setq inhibit-startup-message t)
 (desktop-save-mode 1)
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- )
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(py-indent-paren-spanned-multilines-p nil)
+ '(py-lhs-inbound-indent 0))
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(org-level-1 ((t (:foreground "black" :underline t))))
  '(org-level-2 ((t (:foreground "grey30"))))
  '(org-level-3 ((t (:foreground "grey50")))))
@@ -117,17 +118,17 @@
 
 ; Jedi, which works together with auto-complete
 ;     to add documentation to the dropdown menus
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:complete-on-dot t)                 ; optional
+;(add-hook 'python-mode-hook 'jedi:setup)
+;(setq jedi:complete-on-dot t)                 ; optional
 
 ; jedi-direx to show python code as a tree
-(require 'jedi-direx) ; added to try to make this work
-(setq-default jedi-direx:hide-imports t)
+;(require 'jedi-direx) ; added to try to make this work
+;(setq-default jedi-direx:hide-imports t)
 ;(eval-after-load "python"
 ;  '(define-key python-mode-map "\C-cx" 'jedi-direx:pop-to-buffer))
 ; ^^^^^ didn't work, trying something else
-(global-set-key [(control c) (t)]  'jedi-direx:switch-to-buffer)
-(add-hook 'jedi-mode-hook 'jedi-direx:setup)
+;(global-set-key [(control c) (t)]  'jedi-direx:switch-to-buffer)
+;(add-hook 'jedi-mode-hook 'jedi-direx:setup)
 
 ;; Lua mode
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
@@ -148,3 +149,91 @@
 
 ;; Backups??
 (setq backup-directory-alist `(("." . "~/.saves")))
+
+;; Go!
+;;(add-to-list 'load-path "~/.emacs.d/elfiles")
+;;(require 'go-mode-autoloads)
+
+(add-hook 'before-save-hook #'gofmt-before-save)
+
+;; Whitespace
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(defun kill-and-join-forward (&optional arg)
+  (interactive "P")
+  (if (and (eolp) (not (bolp)))
+	  (progn (forward-char 1)
+			 (just-one-space 0)
+			 (backward-char 1)
+			 (kill-line arg))
+	(kill-line arg)))
+(global-set-key "\C-k" 'kill-and-join-forward)
+
+;; Pychecker
+(delete '("\\.html?\\'" flymake-xml-init) flymake-allowed-file-name-masks)
+(add-hook 'python-mode-hook 'flycheck-mode)
+
+;; Golang from gdb
+
+(defun golang-roots ()
+  (let ((goroot (getenv "GOROOT"))
+		(gopath (getenv "GOPATH"))
+		(roots '()))
+	(when goroot
+	  (setq roots (cons goroot roots)))
+	(when gopath
+	  (setq roots (append (split-string gopath ":") roots)))
+	roots))
+
+(defun golang-require (path feature)
+  (let ((dir (member-if (lambda (dir) (file-directory-p (concat dir "/" path))) (golang-roots))))
+	(when dir
+	  (add-to-list 'load-path (expand-file-name (concat (car dir) "/" path)))
+	  (require feature))))
+
+;;;; TODO: make this import fancier
+;; (load-file "~/emacs/go.tools/refactor/rename/rename.el")
+;; (load-file "~/emacs/go-mode.el/go-mode.el")
+
+;; (golang-require "misc/emacs" 'go-mode-load)
+(golang-require "src/github.com/nsf/gocode/emacs/" 'go-autocomplete)
+(golang-require "src/github.com/golang/lint/misc/emacs" 'golint)
+(let ((oracle-dir (concat (getenv "GOPATH") "/src/golang.org/x/tools/cmd/oracle")))
+  (when (file-directory-p oracle-dir)
+	(load-file (concat oracle-dir "/oracle.el"))
+	;; (add-hook 'go-mode-hook 'go-oracle-mode)
+	(setq go-oracle-command "oracle"))
+  )
+
+(add-hook 'go-mode-hook 'go-eldoc-setup)
+(add-hook 'go-mode-hook 'my-go-mode-hook)
+
+;; go get -u github.com/dougm/goflymake
+(add-to-list 'load-path "~/go/src/github.com/dougm/goflymake")
+(require 'go-flycheck)
+
+(defun my-go-mode-hook ()
+  ;; (set (make-local-variable 'company-backends) '(company-go))
+										; (set (make-local-variable 'company-minimum-prefix-length) 0)
+  (local-set-key (kbd "M-.") 'godef-jump)
+  (local-set-key (kbd "C-c C-r") 'go-rename)
+  (local-set-key (kbd "C-c C-n") 'flycheck-next-error)
+  (local-set-key (kbd "C-c C-p") 'flycheck-previous-error)
+  (local-set-key (kbd "C-c C-l") 'flycheck-list-errors))
+(when (fboundp 'gofmt-before-save)
+  (add-hook 'before-save-hook 'gofmt-before-save)
+  (add-to-list 'safe-local-variable-values '(gofmt-command . "goimports"))
+  (add-to-list 'safe-local-variable-values '(gofmt-command . "gofmt"))
+  (let ((goimports (string-trim (shell-command-to-string "which goimports"))))
+	(when (not (string-equal "" goimports))
+	  (setq gofmt-command goimports))))
+
+;; (require 'go-autocomplete)
+;; (require 'auto-complete-config)
+;; (ac-config-default)
+
+(require 'company)                                   ; load company mode
+(require 'company-go)                                ; load company mode go backend
+
+(add-hook 'go-mode-hook (lambda ()
+						  (set (make-local-variable 'company-backends) '(company-go))
+						                            (company-mode)))

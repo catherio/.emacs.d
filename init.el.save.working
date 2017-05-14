@@ -1,0 +1,16 @@
+;; Catherine Olsson - catherio@mit.edu
+
+;; Loading plugins
+(add-to-list 'load-path "~/.emacs.d/")
+
+;; Visual line mode
+; (ie, turn on word-wrapping, and make C-n etc. work on the lines you *see*)
+(global-visual-line-mode 1)
+
+;; Interactively DO things
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1) 
+
+(load "ido-better-flex-0.2.el")
+(ido-better-flex/enable)
