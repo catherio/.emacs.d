@@ -48,13 +48,98 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
+ '(ansi-color-names-vector
+   ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#657b83"])
+ '(compilation-message-face (quote default))
+ '(cua-global-mark-cursor-color "#2aa198")
+ '(cua-normal-cursor-color "#839496")
+ '(cua-overwrite-cursor-color "#b58900")
+ '(cua-read-only-cursor-color "#859900")
+ '(custom-enabled-themes nil)
+ '(custom-safe-themes
+   (quote
+	("5e48fc8203ef300d49e66f79c134216c6416d2cef7c5c8b04e8fa763ede83084" "3d0d87f3f219d96208690b5e62ad40c50d06743bdc8a1ae700ab75038c491ba1" "a8fab254f55e81f3c980c7d9d8cebcc35cd92148fe46f41d3b981af4458ff787" "71b3e7ac671a5f667d241b1eac29ea9154e3d8ccc830b2f2f4b35f950adce640" "8e66e7c93094056f6dbe0f938e26839d339a67c303b0ef700cf81d720b865d56" "a8245b7cc985a0610d71f9852e9f2767ad1b852c2bdea6f4aadc12cce9c4d6d0" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default)))
+ '(fci-rule-color "#073642")
+ '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
+ '(highlight-symbol-colors
+   (--map
+	(apparel-color-blend it "#002b36" 0.25)
+	(quote
+	 ("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2"))))
+ '(highlight-symbol-foreground-color "#93a1a1")
+ '(highlight-tail-colors
+   (quote
+	(("#073642" . 0)
+	 ("#546E00" . 20)
+	 ("#00736F" . 30)
+	 ("#00629D" . 50)
+	 ("#7B6000" . 60)
+	 ("#8B2C02" . 70)
+	 ("#93115C" . 85)
+	 ("#073642" . 100))))
+ '(hl-bg-colors
+   (quote
+	("#7B6000" "#8B2C02" "#990A1B" "#93115C" "#3F4D91" "#00629D" "#00736F" "#546E00")))
+ '(hl-fg-colors
+   (quote
+	("#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36")))
+ '(magit-diff-use-overlays nil)
+ '(nrepl-message-colors
+   (quote
+	("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
+ '(pos-tip-background-color "#073642")
+ '(pos-tip-foreground-color "#93a1a1")
  '(py-indent-paren-spanned-multilines-p nil)
- '(py-lhs-inbound-indent 0))
+ '(py-lhs-inbound-indent 0)
+ '(safe-local-variable-values
+   (quote
+	((eval when
+		   (fboundp
+			(quote rainbow-mode))
+		   (rainbow-mode 1))
+	 (gofmt-command . "gofmt")
+	 (gofmt-command . "goimports"))))
+ '(smartrep-mode-line-active-bg (apparel-color-blend "#859900" "#073642" 0.2))
+ '(term-default-bg-color "#002b36")
+ '(term-default-fg-color "#839496")
+ '(vc-annotate-background nil)
+ '(vc-annotate-background-mode nil)
+ '(vc-annotate-color-map
+   (quote
+	((20 . "#dc322f")
+	 (40 . "#c37300")
+	 (60 . "#b97d00")
+	 (80 . "#b58900")
+	 (100 . "#a18700")
+	 (120 . "#9b8700")
+	 (140 . "#948700")
+	 (160 . "#8d8700")
+	 (180 . "#859900")
+	 (200 . "#5a942c")
+	 (220 . "#439b43")
+	 (240 . "#2da159")
+	 (260 . "#16a870")
+	 (280 . "#2aa198")
+	 (300 . "#009fa7")
+	 (320 . "#0097b7")
+	 (340 . "#008fc7")
+	 (360 . "#268bd2"))))
+ '(vc-annotate-very-old-color nil)
+ '(weechat-color-list
+   (quote
+	(unspecified "#002b36" "#073642" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#839496" "#657b83")))
+ '(xterm-color-names
+   ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#eee8d5"])
+ '(xterm-color-names-bright
+   ["#002b36" "#cb4b16" "#586e75" "#657b83" "#839496" "#6c71c4" "#93a1a1" "#fdf6e3"]))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((t (:background "nil"))))
  '(org-level-1 ((t (:foreground "black" :underline t))))
  '(org-level-2 ((t (:foreground "grey30"))))
  '(org-level-3 ((t (:foreground "grey50")))))
@@ -100,13 +185,18 @@
 ; pdb.runcall(f, arg, etc.)
 
 ; use IPython
-(setq-default py-shell-name "ipython")
-(setq-default py-which-bufname "IPython")
-(setq py-force-py-shell-name-p t)
+; (setq-default py-shell-name "ipython")
+; (setq-default py-which-bufname "IPython")
+; (setq py-force-py-shell-name-p t)
+
+; fix the prompt formatting? (This didn't work)
+; (setq ansi-color-for-comint-mode t)
+; (setq python-shell-interpreter "ipython"
+;	  python-shell-interpreter-args "--simple-prompt -i")
 
 ; switch to the interpreter after executing code
-(setq py-shell-switch-buffers-on-execute-p t)
-(setq py-switch-buffers-on-execute-p t)
+; (setq py-shell-switch-buffers-on-execute-p t)
+; (setq py-switch-buffers-on-execute-p t)
 ; (setq py-split-windows-on-execute-p nil)
 
 ; try to automagically figure out indentation
@@ -114,21 +204,36 @@
 
 ; Splitting windows horizontally by default
 ;(setq split-width-threshold nil) ; nil for vertical, 1 for horiztontal
-(setq-default py-split-windows-on-execute-function 'split-window-horizontally)
+; (setq-default py-split-windows-on-execute-function 'split-window-horizontally)
 
 ; Jedi, which works together with auto-complete
-;     to add documentation to the dropdown menus
-;(add-hook 'python-mode-hook 'jedi:setup)
-;(setq jedi:complete-on-dot t)                 ; optional
+; (add-hook 'python-mode-hook 'jedi:setup)
+; (setq jedi:complete-on-dot t)                 ; optional
 
-; jedi-direx to show python code as a tree
-;(require 'jedi-direx) ; added to try to make this work
-;(setq-default jedi-direx:hide-imports t)
-;(eval-after-load "python"
-;  '(define-key python-mode-map "\C-cx" 'jedi-direx:pop-to-buffer))
-; ^^^^^ didn't work, trying something else
-;(global-set-key [(control c) (t)]  'jedi-direx:switch-to-buffer)
-;(add-hook 'jedi-mode-hook 'jedi-direx:setup)
+; https://txt.arboreus.com/2013/02/21/jedi.el-jump-to-definition-and-back.html
+;; don't use default keybindings from jedi.el; keep C-. free
+(setq jedi:setup-keys nil)
+(setq jedi:tooltip-method nil)
+(autoload 'jedi:setup "jedi" nil t)
+(add-hook 'python-mode-hook 'jedi:setup)
+(defvar jedi:goto-stack '())
+(defun jedi:jump-to-definition ()
+  (interactive)
+  (add-to-list 'jedi:goto-stack
+			   (list (buffer-name) (point)))
+  (jedi:goto-definition))
+(defun jedi:jump-back ()
+  (interactive)
+  (let ((p (pop jedi:goto-stack)))
+	(if p (progn
+			(switch-to-buffer (nth 0 p))
+			(goto-char (nth 1 p))))))
+(add-hook 'python-mode-hook
+		  '(lambda ()
+			 (local-set-key (kbd "M-.") 'jedi:jump-to-definition)
+			 (local-set-key (kbd "M-,") 'jedi:jump-back)
+			 (local-set-key (kbd "C-c d") 'jedi:show-doc)
+             (local-set-key (kbd "C-<tab>") 'jedi:complete)))
 
 ;; Lua mode
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
@@ -236,4 +341,8 @@
 
 (add-hook 'go-mode-hook (lambda ()
 						  (set (make-local-variable 'company-backends) '(company-go))
-						                            (company-mode)))
+						  (company-mode)))
+
+;; Stupid shit hackathon
+(add-to-list 'load-path "~/Dropbox/Projects/apparel")
+(add-to-list 'custom-theme-load-path "~/Dropbox/Projects/apparel")
