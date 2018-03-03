@@ -3,6 +3,26 @@
 ;; Packages
 (add-to-list 'load-path "~/.emacs.d/elfiles")
 
+;; from .emacs
+(package-initialize)
+(require 'google)
+
+;; more google adaptations
+(add-hook 'python-mode-hook
+          (lambda ()
+            (kill-local-variable 'eldoc-documentation-function)))
+(setq google-show-python-mode-warning nil)
+
+(require 'google-pyformat)
+;; Don't do it automatically on save though. This is very bad for open-source code that isn't googley.
+;; (add-hook 'python-mode-hook
+;;   (lambda ()
+;;     (unless (eq major-mode 'google3-build-mode)
+;;       (add-hook 'before-save-hook 'google-pyformat nil t))))
+
+(require 'google-flymake) ;; not sure about this either
+(require 'pylint) ;; unclear!
+
 ;; Visual line mode
 ; (ie, turn on word-wrapping, and make C-n etc. work on the lines you *see*)
 (global-visual-line-mode 1)
@@ -89,6 +109,9 @@
  '(nrepl-message-colors
    (quote
 	("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
+ '(package-selected-packages
+   (quote
+	(bracketed-paste fill-column-indicator web-mode virtualenv python-mode json-mode jedi-direx flycheck-pyflakes flycheck-pkg-config exec-path-from-shell doremi-mac doremi-frm doremi-cmd company-go)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(py-indent-paren-spanned-multilines-p nil)
@@ -212,28 +235,28 @@
 
 ; https://txt.arboreus.com/2013/02/21/jedi.el-jump-to-definition-and-back.html
 ;; don't use default keybindings from jedi.el; keep C-. free
-(setq jedi:setup-keys nil)
-(setq jedi:tooltip-method nil)
-(autoload 'jedi:setup "jedi" nil t)
-(add-hook 'python-mode-hook 'jedi:setup)
-(defvar jedi:goto-stack '())
-(defun jedi:jump-to-definition ()
-  (interactive)
-  (add-to-list 'jedi:goto-stack
-			   (list (buffer-name) (point)))
-  (jedi:goto-definition))
-(defun jedi:jump-back ()
-  (interactive)
-  (let ((p (pop jedi:goto-stack)))
-	(if p (progn
-			(switch-to-buffer (nth 0 p))
-			(goto-char (nth 1 p))))))
-(add-hook 'python-mode-hook
-		  '(lambda ()
-			 (local-set-key (kbd "M-.") 'jedi:jump-to-definition)
-			 (local-set-key (kbd "M-,") 'jedi:jump-back)
-			 (local-set-key (kbd "C-c d") 'jedi:show-doc)
-             (local-set-key (kbd "C-<tab>") 'jedi:complete)))
+;; (setq jedi:setup-keys nil)
+;; (setq jedi:tooltip-method nil)
+;; (autoload 'jedi:setup "jedi" nil t)
+;; (add-hook 'python-mode-hook 'jedi:setup)
+;; (defvar jedi:goto-stack '())
+;; (defun jedi:jump-to-definition ()
+;;   (interactive)
+;;   (add-to-list 'jedi:goto-stack
+;; 			   (list (buffer-name) (point)))
+;;   (jedi:goto-definition))
+;; (defun jedi:jump-back ()
+;;   (interactive)
+;;   (let ((p (pop jedi:goto-stack)))
+;; 	(if p (progn
+;; 			(switch-to-buffer (nth 0 p))
+;; 			(goto-char (nth 1 p))))))
+;; (add-hook 'python-mode-hook
+;; 		  '(lambda ()
+;; 			 (local-set-key (kbd "M-.") 'jedi:jump-to-definition)
+;; 			 (local-set-key (kbd "M-,") 'jedi:jump-back)
+;; 			 (local-set-key (kbd "C-c d") 'jedi:show-doc)
+;;              (local-set-key (kbd "C-<tab>") 'jedi:complete)))
 
 ;; Lua mode
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
@@ -277,6 +300,14 @@
 (delete '("\\.html?\\'" flymake-xml-init) flymake-allowed-file-name-masks)
 (add-hook 'python-mode-hook 'flycheck-mode)
 
+;; Fill column indicator
+(add-to-list 'load-path "~/.emacs.d/fill-column-indicator-1.83")
+(require 'fill-column-indicator)
+(define-globalized-minor-mode
+ global-fci-mode fci-mode (lambda () (fci-mode 1)))
+(global-fci-mode t)
+(setq fci-rule-column 79)
+
 ;; Golang from gdb
 
 (defun golang-roots ()
@@ -295,54 +326,58 @@
 	  (add-to-list 'load-path (expand-file-name (concat (car dir) "/" path)))
 	  (require feature))))
 
+;; Bracketed paste!!
+(require 'bracketed-paste)
+(bracketed-paste-enable)
+
 ;;;; TODO: make this import fancier
 ;; (load-file "~/emacs/go.tools/refactor/rename/rename.el")
 ;; (load-file "~/emacs/go-mode.el/go-mode.el")
 
 ;; (golang-require "misc/emacs" 'go-mode-load)
-(golang-require "src/github.com/nsf/gocode/emacs/" 'go-autocomplete)
-(golang-require "src/github.com/golang/lint/misc/emacs" 'golint)
-(let ((oracle-dir (concat (getenv "GOPATH") "/src/golang.org/x/tools/cmd/oracle")))
-  (when (file-directory-p oracle-dir)
-	(load-file (concat oracle-dir "/oracle.el"))
-	;; (add-hook 'go-mode-hook 'go-oracle-mode)
-	(setq go-oracle-command "oracle"))
-  )
+;; (golang-require "src/github.com/nsf/gocode/emacs/" 'go-autocomplete)
+;; (golang-require "src/github.com/golang/lint/misc/emacs" 'golint)
+;; (let ((oracle-dir (concat (getenv "GOPATH") "/src/golang.org/x/tools/cmd/oracle")))
+;;   (when (file-directory-p oracle-dir)
+;; 	(load-file (concat oracle-dir "/oracle.el"))
+;; 	;; (add-hook 'go-mode-hook 'go-oracle-mode)
+;; 	(setq go-oracle-command "oracle"))
+;;   )
 
-(add-hook 'go-mode-hook 'go-eldoc-setup)
-(add-hook 'go-mode-hook 'my-go-mode-hook)
+;; (add-hook 'go-mode-hook 'go-eldoc-setup)
+;; (add-hook 'go-mode-hook 'my-go-mode-hook)
 
 ;; go get -u github.com/dougm/goflymake
-(add-to-list 'load-path "~/go/src/github.com/dougm/goflymake")
-(require 'go-flycheck)
+;; (add-to-list 'load-path "~/go/src/github.com/dougm/goflymake")
+;; (require 'go-flycheck)
 
-(defun my-go-mode-hook ()
-  ;; (set (make-local-variable 'company-backends) '(company-go))
-										; (set (make-local-variable 'company-minimum-prefix-length) 0)
-  (local-set-key (kbd "M-.") 'godef-jump)
-  (local-set-key (kbd "C-c C-r") 'go-rename)
-  (local-set-key (kbd "C-c C-n") 'flycheck-next-error)
-  (local-set-key (kbd "C-c C-p") 'flycheck-previous-error)
-  (local-set-key (kbd "C-c C-l") 'flycheck-list-errors))
-(when (fboundp 'gofmt-before-save)
-  (add-hook 'before-save-hook 'gofmt-before-save)
-  (add-to-list 'safe-local-variable-values '(gofmt-command . "goimports"))
-  (add-to-list 'safe-local-variable-values '(gofmt-command . "gofmt"))
-  (let ((goimports (string-trim (shell-command-to-string "which goimports"))))
-	(when (not (string-equal "" goimports))
-	  (setq gofmt-command goimports))))
+;; (defun my-go-mode-hook ()
+;;   ;; (set (make-local-variable 'company-backends) '(company-go))
+;; 										; (set (make-local-variable 'company-minimum-prefix-length) 0)
+;;   (local-set-key (kbd "M-.") 'godef-jump)
+;;   (local-set-key (kbd "C-c C-r") 'go-rename)
+;;   (local-set-key (kbd "C-c C-n") 'flycheck-next-error)
+;;   (local-set-key (kbd "C-c C-p") 'flycheck-previous-error)
+;;   (local-set-key (kbd "C-c C-l") 'flycheck-list-errors))
+;; (when (fboundp 'gofmt-before-save)
+;;   (add-hook 'before-save-hook 'gofmt-before-save)
+;;   (add-to-list 'safe-local-variable-values '(gofmt-command . "goimports"))
+;;   (add-to-list 'safe-local-variable-values '(gofmt-command . "gofmt"))
+;;   (let ((goimports (string-trim (shell-command-to-string "which goimports"))))
+;; 	(when (not (string-equal "" goimports))
+;; 	  (setq gofmt-command goimports))))
 
 ;; (require 'go-autocomplete)
 ;; (require 'auto-complete-config)
 ;; (ac-config-default)
 
-(require 'company)                                   ; load company mode
-(require 'company-go)                                ; load company mode go backend
+;; (require 'company)                                   ; load company mode
+;; (require 'company-go)                                ; load company mode go backend
 
-(add-hook 'go-mode-hook (lambda ()
-						  (set (make-local-variable 'company-backends) '(company-go))
-						  (company-mode)))
+;; (add-hook 'go-mode-hook (lambda ()
+;; 						  (set (make-local-variable 'company-backends) '(company-go))
+;; 						  (company-mode)))
 
-;; Stupid shit hackathon
-(add-to-list 'load-path "~/Dropbox/Projects/apparel")
-(add-to-list 'custom-theme-load-path "~/Dropbox/Projects/apparel")
+;; ;; Stupid shit hackathon
+;; (add-to-list 'load-path "~/Dropbox/Projects/apparel")
+;; (add-to-list 'custom-theme-load-path "~/Dropbox/Projects/apparel")
