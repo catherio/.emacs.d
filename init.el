@@ -5,23 +5,22 @@
 
 ;; from .emacs
 (package-initialize)
-(require 'google)
-
-;; more google adaptations
-(add-hook 'python-mode-hook
-          (lambda ()
-            (kill-local-variable 'eldoc-documentation-function)))
-(setq google-show-python-mode-warning nil)
-
-(require 'google-pyformat)
+(if (not (require 'google nil t))
+    (message "`google' not found")
+  (add-hook 'python-mode-hook
+  (lambda ()
+	(kill-local-variable 'eldoc-documentation-function)))
+  (setq google-show-python-mode-warning nil)
+  (require 'google-pyformat)
 ;; Don't do it automatically on save though. This is very bad for open-source code that isn't googley.
 ;; (add-hook 'python-mode-hook
 ;;   (lambda ()
 ;;     (unless (eq major-mode 'google3-build-mode)
 ;;       (add-hook 'before-save-hook 'google-pyformat nil t))))
 
-(require 'google-flymake) ;; not sure about this either
-(require 'pylint) ;; unclear!
+  (require 'google-flymake) ;; not sure about this either
+  (require 'pylint) ;; unclear!
+  )
 
 ;; Visual line mode
 ; (ie, turn on word-wrapping, and make C-n etc. work on the lines you *see*)
