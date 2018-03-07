@@ -5,3 +5,5 @@
 session.*
 .emacs.desktop
 .emacs.desktop.lock
+*.dat
+*.last

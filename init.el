@@ -181,14 +181,18 @@
 ;;;;;;;;;;;;;;;;; PROGRAMMING MODES ;;;;;;;;;;;;;;;;;
 
 ;; Python
-(setq-default tab-width 4)
-(setq-default python-indent 4)
-;(add-hook 'python-mode-hook
-;		  (function (lambda () (setq tab-width 4
-;									 python-indent 4))))
+(require 'python-mode)
+
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+(setq-default py-indent-tabs-mode nil)
+(setq-default python-indent 2)
+(setq-default py-indent-offset 2)
 (setq py-install-directory  "~/.emacs.d/elfiles/python-mode.el-6.2.2/")
 (add-to-list 'load-path py-install-directory)
-(require 'python-mode)
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq py-smart-indentation t)))
 
 ;; Python borrowed from jhamrick
 
@@ -221,8 +225,6 @@
 ; (setq py-switch-buffers-on-execute-p t)
 ; (setq py-split-windows-on-execute-p nil)
 
-; try to automagically figure out indentation
-(setq py-smart-indentation t)
 
 ; Splitting windows horizontally by default
 ;(setq split-width-threshold nil) ; nil for vertical, 1 for horiztontal
