@@ -331,6 +331,11 @@
 (require 'bracketed-paste)
 (bracketed-paste-enable)
 
+;; Oh yeah it's ipdb
+(fset 'ipdb
+      (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("import ipdb; ipdb.set_trace()" 0 "%d")) arg)))
+(global-set-key (kbd "C-x p") 'ipdb)
+
 ;;;; TODO: make this import fancier
 ;; (load-file "~/emacs/go.tools/refactor/rename/rename.el")
 ;; (load-file "~/emacs/go-mode.el/go-mode.el")
